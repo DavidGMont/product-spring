@@ -1,30 +1,30 @@
 package me.davidgarmo.soundseeker.product.service.impl;
 
-import me.davidgarmo.soundseeker.product.persistence.entity.ProductEntity;
 import me.davidgarmo.soundseeker.product.service.ICrudService;
+import me.davidgarmo.soundseeker.product.service.dto.ProductDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ProductService implements ICrudService<ProductEntity> {
+public class ProductService implements ICrudService<ProductDto> {
     @Override
-    public ProductEntity save(ProductEntity productEntity) {
+    public ProductDto save(ProductDto productDto) {
         return null;
     }
 
     @Override
-    public ProductEntity findById(Long id) {
+    public ProductDto findById(Long id) {
         return null;
     }
 
     @Override
-    public List<ProductEntity> findAll() {
+    public List<ProductDto> findAll() {
         return List.of();
     }
 
     @Override
-    public ProductEntity update(ProductEntity productEntity) {
+    public ProductDto update(ProductDto productDto) {
         return null;
     }
 
