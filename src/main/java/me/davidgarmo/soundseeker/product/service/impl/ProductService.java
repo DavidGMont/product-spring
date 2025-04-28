@@ -23,7 +23,12 @@ public class ProductService implements ICrudService<ProductDto> {
 
     @Override
     public ProductDto save(ProductDto productDto) {
-        return null;
+        if (this.productRepository.existsByNameIgnoreCase(productDto.name())) {
+            throw new IllegalArgumentException("Product name already exists.");
+        }
+        ProductEntity productEntity = this.productMapper.toEntity(productDto);
+        ProductEntity savedProduct = this.productRepository.save(productEntity);
+        return this.productMapper.toDto(savedProduct);
     }
 
     @Override
