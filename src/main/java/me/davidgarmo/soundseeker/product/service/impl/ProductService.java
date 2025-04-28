@@ -33,7 +33,9 @@ public class ProductService implements ICrudService<ProductDto> {
 
     @Override
     public ProductDto findById(Long id) {
-        return null;
+        return this.productRepository.findById(id)
+                .map(productMapper::toDto)
+                .orElse(null);
     }
 
     @Override
