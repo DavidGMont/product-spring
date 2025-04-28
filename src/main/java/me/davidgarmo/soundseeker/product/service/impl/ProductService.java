@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements ICrudService<ProductDto> {
@@ -40,7 +41,10 @@ public class ProductService implements ICrudService<ProductDto> {
 
     @Override
     public List<ProductDto> findAll() {
-        return List.of();
+        return this.productRepository.findAll()
+                .stream()
+                .map(productMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
