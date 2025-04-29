@@ -41,7 +41,7 @@ public class ProductEntity {
     @Positive(message = "Price must be positive and greater than zero.")
     private Double price;
 
-    @Column(columnDefinition = "TINYINT(1)", nullable = false)
+    @Column(columnDefinition = "TINYINT", nullable = false)
     @NotNull(message = "Product availability cannot be null.")
     private Boolean available;
 
