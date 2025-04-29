@@ -22,4 +22,9 @@ public class ProductController {
     public ResponseEntity<ProductDto> save(@Valid @RequestBody ProductDto productDto) {
         return ResponseEntity.status(201).body(this.productService.save(productDto));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.productService.findById(id));
+    }
 }
