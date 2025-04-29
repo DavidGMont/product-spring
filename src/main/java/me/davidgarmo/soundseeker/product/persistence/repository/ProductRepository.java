@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends ListCrudRepository<ProductEntity, Long> {
     boolean existsByNameIgnoreCase(@NonNull String name);
+
+    boolean existsByNameIgnoreCaseAndIdNot(@NonNull String name, @NonNull Long id);
 }
