@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "BRAND")
@@ -41,6 +43,9 @@ public class BrandEntity {
     @Column(columnDefinition = "TINYINT", nullable = false)
     @NotNull(message = "Brand availability cannot be null.")
     private Boolean available = true;
+
+    @OneToMany(mappedBy = "brand", orphanRemoval = true)
+    private Set<ProductEntity> products = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {

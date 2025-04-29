@@ -49,6 +49,10 @@ public class ProductEntity {
     @NotBlank(message = "Product thumbnail cannot be null or empty.")
     private String thumbnail;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "brand_id", nullable = false)
+    private BrandEntity brand;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
