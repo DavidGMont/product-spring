@@ -62,6 +62,9 @@ public class ProductService implements ICrudService<ProductDto> {
 
     @Override
     public void deleteById(Long id) {
-
+        if (!this.productRepository.existsById(id)) {
+            throw new IllegalArgumentException("Product not found.");
+        }
+        this.productRepository.deleteById(id);
     }
 }
