@@ -34,4 +34,9 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> findAll() {
         return ResponseEntity.ok(this.productService.findAll());
     }
+
+    @PutMapping
+    public ResponseEntity<ProductDto> update(@Valid @RequestBody ProductDto productDto) {
+        return ResponseEntity.ok(this.productService.update(productDto));
+    }
 }
