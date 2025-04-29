@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/products")
 @CrossOrigin
@@ -26,5 +28,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.productService.findById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> findAll() {
+        return ResponseEntity.ok(this.productService.findAll());
     }
 }
