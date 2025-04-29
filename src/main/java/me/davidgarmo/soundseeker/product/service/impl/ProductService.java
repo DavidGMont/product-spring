@@ -49,7 +49,15 @@ public class ProductService implements ICrudService<ProductDto> {
 
     @Override
     public ProductDto update(ProductDto productDto) {
-        return null;
+        if (productDto.id() == null) {
+            throw new IllegalArgumentException("Product ID cannot be null.");
+        }
+        if (this.productRepository.existsByNameIgnoreCaseAndIdNot(productDto.name(), productDto.id())) {
+            throw new IllegalArgumentException("Product name already exists.");
+        }
+        ProductEntity productToUpdate = this.productMapper.toEntity(productDto);
+        ProductEntity updatedProduct = this.productRepository.save(productToUpdate);
+        return this.productMapper.toDto(updatedProduct);
     }
 
     @Override
