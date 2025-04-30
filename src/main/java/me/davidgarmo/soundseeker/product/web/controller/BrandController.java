@@ -20,4 +20,9 @@ public class BrandController {
     public ResponseEntity<BrandDto> save(@Valid @RequestBody BrandDto brandDto) {
         return ResponseEntity.status(201).body(this.brandService.save(brandDto));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BrandDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.brandService.findById(id));
+    }
 }
