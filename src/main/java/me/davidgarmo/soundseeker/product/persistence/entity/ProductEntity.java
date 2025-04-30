@@ -15,7 +15,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PRODUCT")
+@Table(name = "PRODUCT", indexes = {
+        @Index(name = "idx_product_brand", columnList = "brand_id")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
