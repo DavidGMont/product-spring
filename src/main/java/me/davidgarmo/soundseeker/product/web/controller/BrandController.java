@@ -1,9 +1,10 @@
 package me.davidgarmo.soundseeker.product.web.controller;
 
+import jakarta.validation.Valid;
 import me.davidgarmo.soundseeker.product.service.IBrandService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.davidgarmo.soundseeker.product.service.dto.BrandDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/brands")
@@ -13,5 +14,10 @@ public class BrandController {
 
     public BrandController(IBrandService brandService) {
         this.brandService = brandService;
+    }
+
+    @PostMapping
+    public ResponseEntity<BrandDto> save(@Valid @RequestBody BrandDto brandDto) {
+        return ResponseEntity.status(201).body(this.brandService.save(brandDto));
     }
 }
