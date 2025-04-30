@@ -51,6 +51,7 @@ public class ProductEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "brand_id", nullable = false)
+    @NotNull(message = "Brand cannot be null.")
     private BrandEntity brand;
 
     @Override
