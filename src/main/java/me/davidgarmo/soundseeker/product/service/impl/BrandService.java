@@ -31,7 +31,9 @@ public class BrandService implements IBrandService {
 
     @Override
     public BrandDto findById(Long id) {
-        return null;
+        return this.brandRepository.findById(id)
+                .map(brandMapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Brand not found."));
     }
 
     @Override
