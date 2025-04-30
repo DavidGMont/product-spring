@@ -6,6 +6,8 @@ import me.davidgarmo.soundseeker.product.service.dto.BrandDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/brands")
 @CrossOrigin
@@ -24,5 +26,10 @@ public class BrandController {
     @GetMapping("/{id}")
     public ResponseEntity<BrandDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.brandService.findById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BrandDto>> findAll() {
+        return ResponseEntity.ok(this.brandService.findAll());
     }
 }
