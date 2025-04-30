@@ -60,6 +60,9 @@ public class BrandService implements IBrandService {
 
     @Override
     public void deleteById(Long id) {
-
+        if (!this.brandRepository.existsById(id)) {
+            throw new IllegalArgumentException("Brand not found.");
+        }
+        this.brandRepository.deleteById(id);
     }
 }
