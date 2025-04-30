@@ -1,5 +1,6 @@
 package me.davidgarmo.soundseeker.product.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +46,7 @@ public class BrandEntity {
     private Boolean available = true;
 
     @OneToMany(mappedBy = "brand", orphanRemoval = true)
+    @JsonIgnore
     private Set<ProductEntity> products = new LinkedHashSet<>();
 
     @Override
