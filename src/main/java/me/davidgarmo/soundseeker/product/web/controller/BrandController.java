@@ -32,4 +32,9 @@ public class BrandController {
     public ResponseEntity<List<BrandDto>> findAll() {
         return ResponseEntity.ok(this.brandService.findAll());
     }
+
+    @PutMapping
+    public ResponseEntity<BrandDto> update(@Valid @RequestBody BrandDto brandDto) {
+        return ResponseEntity.ok(this.brandService.update(brandDto));
+    }
 }
