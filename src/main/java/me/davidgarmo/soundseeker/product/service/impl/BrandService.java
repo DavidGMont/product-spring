@@ -1,5 +1,8 @@
 package me.davidgarmo.soundseeker.product.service.impl;
 
+import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
+import me.davidgarmo.soundseeker.product.persistence.mapper.BrandMapper;
+import me.davidgarmo.soundseeker.product.persistence.repository.BrandRepository;
 import me.davidgarmo.soundseeker.product.service.IBrandService;
 import me.davidgarmo.soundseeker.product.service.dto.BrandDto;
 import org.springframework.stereotype.Service;
@@ -8,9 +11,22 @@ import java.util.List;
 
 @Service
 public class BrandService implements IBrandService {
+    private final BrandRepository brandRepository;
+    private final BrandMapper brandMapper;
+
+    public BrandService(BrandRepository brandRepository, BrandMapper brandMapper) {
+        this.brandRepository = brandRepository;
+        this.brandMapper = brandMapper;
+    }
+
     @Override
     public BrandDto save(BrandDto brandDto) {
-        return null;
+        if (this.brandRepository.existsByNameIgnoreCase(brandDto.name())) {
+            throw new IllegalArgumentException("Brand name already exists.");
+        }
+        BrandEntity brand = this.brandMapper.toEntity(brandDto);
+        BrandEntity savedBrand = this.brandRepository.save(brand);
+        return this.brandMapper.toDto(savedBrand);
     }
 
     @Override
