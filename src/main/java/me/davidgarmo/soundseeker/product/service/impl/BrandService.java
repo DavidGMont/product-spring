@@ -8,6 +8,7 @@ import me.davidgarmo.soundseeker.product.service.dto.BrandDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandService implements IBrandService {
@@ -38,7 +39,10 @@ public class BrandService implements IBrandService {
 
     @Override
     public List<BrandDto> findAll() {
-        return List.of();
+        return this.brandRepository.findAll()
+                .stream()
+                .map(brandMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
