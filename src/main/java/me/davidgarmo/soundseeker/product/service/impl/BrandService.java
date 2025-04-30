@@ -47,7 +47,15 @@ public class BrandService implements IBrandService {
 
     @Override
     public BrandDto update(BrandDto brandDto) {
-        return null;
+        if (brandDto.id() == null) {
+            throw new IllegalArgumentException("Brand ID cannot be null.");
+        }
+        if (this.brandRepository.existsByNameIgnoreCaseAndIdNot(brandDto.name(), brandDto.id())) {
+            throw new IllegalArgumentException("Brand name already exists.");
+        }
+        BrandEntity brandToUpdate = this.brandMapper.toEntity(brandDto);
+        BrandEntity updatedBrand = this.brandRepository.save(brandToUpdate);
+        return this.brandMapper.toDto(updatedBrand);
     }
 
     @Override
