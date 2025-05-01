@@ -3,8 +3,12 @@ package me.davidgarmo.soundseeker.product.service.impl;
 import me.davidgarmo.soundseeker.product.service.IFileUploadService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class FileUploadService implements IFileUploadService {
@@ -48,9 +52,20 @@ public class FileUploadService implements IFileUploadService {
         });
     }
 
+    @Value("${file.upload.directory:uploads}")
+    private String uploadDir;
+
     @Override
     public void init() {
-
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+                LOGGER.debug("Upload directory created at: {}", uploadPath.toAbsolutePath());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
