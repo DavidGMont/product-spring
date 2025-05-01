@@ -136,7 +136,14 @@ public class FileUploadService implements IFileUploadService {
 
     @Override
     public String getFileContentType(String fileName) {
-        return "";
+        String extension = getFileExtension(fileName);
+        return switch (extension.toLowerCase()) {
+            case "gif" -> "image/gif";
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "webp" -> "image/webp";
+            default -> "application/octet-stream";
+        };
     }
 
     private String getFileExtension(String fileName) {
