@@ -123,7 +123,15 @@ public class FileUploadService implements IFileUploadService {
 
     @Override
     public byte[] serveFile(String fileName) {
-        return new byte[0];
+        try {
+            Path filePath = Paths.get(uploadDir).resolve(fileName);
+            if (!Files.exists(filePath) || !isFilePathSafe(filePath)) {
+                throw new FileUploadException("File not found: " + fileName + ".");
+            }
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new FileUploadException("Failed to read file: " + fileName + ".", e);
+        }
     }
 
     @Override
@@ -175,5 +183,15 @@ public class FileUploadService implements IFileUploadService {
             }
         }
         return false;
+    }
+
+    private boolean isFilePathSafe(Path filePath) {
+        try {
+            Path canonicalPath = filePath.toRealPath();
+            Path uploadDirectoryPath = Paths.get(uploadDir).toRealPath();
+            return canonicalPath.startsWith(uploadDirectoryPath);
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
