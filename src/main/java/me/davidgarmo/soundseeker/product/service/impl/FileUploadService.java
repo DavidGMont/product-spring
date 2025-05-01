@@ -66,13 +66,59 @@ public class FileUploadService implements IFileUploadService {
                 LOGGER.debug("Upload directory created at: {}", uploadPath.toAbsolutePath());
             }
         } catch (IOException e) {
-            throw new FileUploadException("Failed to initialize upload directory", e);
+            throw new FileUploadException("Failed to initialize upload directory.", e);
         }
     }
 
     @Override
     public Map<String, String> uploadFile(MultipartFile file) {
-        return Map.of();
+        if (file.isEmpty()) {
+            throw new FileUploadException("No file uploaded, file is empty.");
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            throw new FileUploadException("Invalid name, file name is empty.");
+        }
+
+        String extension = getFileExtension(originalFileName);
+
+        if (!isValidExtension(extension)) {
+            throw new FileUploadException("File type not permitted. Allowed types: " +
+                    String.join(", ", ALLOWED_EXTENSIONS) + ".");
+        }
+
+        String contentType = file.getContentType();
+        if (!isValidMimeType(contentType)) {
+            throw new FileUploadException("File type not permitted. Invalid MIME type: " + contentType + ".");
+        }
+
+        try {
+            byte[] fileStart = Arrays.copyOf(file.getBytes(), (int) Math.min(12, file.getSize()));
+
+            if (fileStart.length < 4) {
+                throw new FileUploadException("File is too small to be a valid image.");
+            }
+
+            if (!isValidFileContent(fileStart, extension)) {
+                LOGGER.warn("File content does not match the expected signature for extension: {}.", extension);
+                throw new FileUploadException("File content does not match with the declared extension.");
+            }
+
+            String fileName = System.currentTimeMillis() + "." + originalFileName;
+            Path targetLocation = Paths.get(uploadDir).resolve(fileName);
+
+            Files.copy(file.getInputStream(), targetLocation);
+
+            Map<String, String> fileInfo = new HashMap<>();
+            fileInfo.put("filePath", "uploads/" + fileName);
+            fileInfo.put("fileName", fileName);
+            fileInfo.put("originalFileName", originalFileName);
+
+            return fileInfo;
+        } catch (IOException e) {
+            throw new FileUploadException("Failed to save file: " + file.getOriginalFilename() + ".", e);
+        }
     }
 
     @Override
@@ -83,5 +129,51 @@ public class FileUploadService implements IFileUploadService {
     @Override
     public String getFileContentType(String fileName) {
         return "";
+    }
+
+    private String getFileExtension(String fileName) {
+        if (fileName == null || fileName.lastIndexOf(".") == -1) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+    }
+
+    private boolean isValidExtension(String extension) {
+        return ALLOWED_EXTENSIONS.contains(extension.toLowerCase());
+    }
+
+    private boolean isValidMimeType(String mimeType) {
+        if (mimeType == null) {
+            return false;
+        }
+        return ALLOWED_MIME_TYPES.contains(mimeType.toLowerCase());
+    }
+
+    private boolean isValidFileContent(byte[] fileStart, String extension) {
+        byte[][] signatures = FILE_SIGNATURES.get(extension.toLowerCase());
+        if (signatures == null) return false;
+
+        for (byte[] signature : signatures) {
+            boolean match = true;
+            if (extension.equalsIgnoreCase("webp")) {
+                if (fileStart.length < 12) return false;
+                if (!(fileStart[0] == signature[0] && fileStart[1] == signature[1] && fileStart[2] == signature[2] && fileStart[3] == signature[3])) {
+                    continue;
+                }
+                if (!(fileStart[8] == signature[8] && fileStart[9] == signature[9] && fileStart[10] == signature[10] && fileStart[11] == signature[11])) {
+                    continue;
+                }
+                return true;
+            } else {
+                for (int i = 0; i < signature.length; i++) {
+                    if (i >= fileStart.length || fileStart[i] != signature[i]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) return true;
+            }
+        }
+        return false;
     }
 }
