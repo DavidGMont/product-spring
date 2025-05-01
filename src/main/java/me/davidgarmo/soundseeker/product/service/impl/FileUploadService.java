@@ -1,11 +1,13 @@
 package me.davidgarmo.soundseeker.product.service.impl;
 
 import me.davidgarmo.soundseeker.product.service.IFileUploadService;
+import me.davidgarmo.soundseeker.product.service.exception.FileUploadException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,8 +65,8 @@ public class FileUploadService implements IFileUploadService {
                 Files.createDirectories(uploadPath);
                 LOGGER.debug("Upload directory created at: {}", uploadPath.toAbsolutePath());
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new FileUploadException("Failed to initialize upload directory", e);
         }
     }
 
