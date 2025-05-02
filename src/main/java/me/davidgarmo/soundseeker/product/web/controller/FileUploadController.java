@@ -19,11 +19,11 @@ public class FileUploadController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestPart("file") MultipartFile file) {
         Map<String, String> fileInfo = fileUploadService.uploadFile(file);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("status", "success");
+        response.put("success", true);
         response.put("filePath", fileInfo.get("filePath"));
         response.put("fileName", fileInfo.get("fileName"));
         response.put("originalFileName", fileInfo.get("originalFileName"));
