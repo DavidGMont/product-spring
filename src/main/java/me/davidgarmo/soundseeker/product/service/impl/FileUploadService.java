@@ -107,13 +107,13 @@ public class FileUploadService implements IFileUploadService {
                 throw new FileUploadException("File content does not match with the declared extension.");
             }
 
-            String fileName = System.currentTimeMillis() + "." + originalFileName;
+            String fileName = System.currentTimeMillis() + "." + extension;
             Path targetLocation = Paths.get(uploadDir).resolve(fileName);
 
             Files.copy(file.getInputStream(), targetLocation);
 
             Map<String, String> fileInfo = new HashMap<>();
-            fileInfo.put("filePath", "uploads/" + fileName);
+            fileInfo.put("filePath", "/uploads/" + fileName);
             fileInfo.put("fileName", fileName);
             fileInfo.put("originalFileName", originalFileName);
 
