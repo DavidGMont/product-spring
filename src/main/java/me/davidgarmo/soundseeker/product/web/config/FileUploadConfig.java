@@ -18,8 +18,6 @@ public class FileUploadConfig implements WebMvcConfigurer {
 
     @Bean
     CommandLineRunner init(IFileUploadService fileUploadService) {
-        return args -> {
-            fileUploadService.init();
-        };
+        return args -> fileUploadService.init();
     }
 }
