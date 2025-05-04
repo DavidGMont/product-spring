@@ -16,7 +16,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "PRODUCT", indexes = {
-        @Index(name = "idx_product_brand", columnList = "brand_id")
+        @Index(name = "idx_product_brand", columnList = "brand_id"),
+        @Index(name = "idx_product_category", columnList = "category_id")
 })
 @AllArgsConstructor
 @NoArgsConstructor
