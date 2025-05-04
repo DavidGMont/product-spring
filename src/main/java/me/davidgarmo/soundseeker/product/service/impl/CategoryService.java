@@ -31,7 +31,9 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public CategoryDto findById(Long id) {
-        return null;
+        return this.categoryRepository.findById(id)
+                .map(categoryMapper::toDto)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found."));
     }
 
     @Override
