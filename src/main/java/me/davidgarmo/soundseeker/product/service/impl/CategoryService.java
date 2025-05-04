@@ -8,6 +8,7 @@ import me.davidgarmo.soundseeker.product.service.dto.CategoryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService implements ICategoryService {
@@ -38,7 +39,10 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public List<CategoryDto> findAll() {
-        return List.of();
+        return this.categoryRepository.findAll()
+                .stream()
+                .map(categoryMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
