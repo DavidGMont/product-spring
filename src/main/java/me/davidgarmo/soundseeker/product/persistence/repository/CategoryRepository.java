@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends ListCrudRepository<CategoryEntity, Long> {
     boolean existsByNameIgnoreCase(@NonNull String name);
+
+    boolean existsByNameIgnoreCaseAndIdNot(@NonNull String name, @NonNull Long id);
 }
