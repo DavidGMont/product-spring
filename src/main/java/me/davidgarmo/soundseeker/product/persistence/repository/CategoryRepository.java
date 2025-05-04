@@ -1,9 +1,11 @@
 package me.davidgarmo.soundseeker.product.persistence.repository;
 
-import jdk.jfr.Registered;
 import me.davidgarmo.soundseeker.product.persistence.entity.CategoryEntity;
 import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 
-@Registered
+@Repository
 public interface CategoryRepository extends ListCrudRepository<CategoryEntity, Long> {
+    boolean existsByNameIgnoreCase(@NonNull String name);
 }
