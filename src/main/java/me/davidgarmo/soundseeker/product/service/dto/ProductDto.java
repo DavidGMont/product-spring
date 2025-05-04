@@ -31,5 +31,8 @@ public record ProductDto(
         Boolean available,
 
         @NotBlank(message = "Product thumbnail cannot be null or empty.")
-        String thumbnail) implements Serializable {
+        String thumbnail,
+
+        @NotNull(message = "Brand cannot be null.")
+        BrandDto brand) implements Serializable {
 }

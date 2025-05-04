@@ -1,9 +1,9 @@
 package me.davidgarmo.soundseeker.product.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,50 +11,43 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "PRODUCT", indexes = {
-        @Index(name = "idx_product_brand", columnList = "brand_id")
-})
+@Table(name = "BRAND")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductEntity {
+public class BrandEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
     @Column(length = 60, nullable = false, unique = true)
-    @NotBlank(message = "Product name cannot be null or empty.")
-    @Size(max = 60, message = "Product name cannot exceed 60 characters.")
+    @NotBlank(message = "Brand name cannot be null or empty.")
+    @Size(max = 60, message = "Brand name cannot exceed 60 characters.")
     private String name;
 
-    @Column(length = 1000, nullable = false)
-    @NotBlank(message = "Product description cannot be null or empty.")
-    @Size(max = 1000, message = "Product description cannot exceed 1000 characters.")
+    @Column(length = 1000)
+    @Size(max = 1000, message = "Brand description cannot exceed 1000 characters.")
     private String description;
 
-    @Column(columnDefinition = "DECIMAL(10, 2)", nullable = false)
-    @NotNull(message = "Price cannot be null.")
-    @Positive(message = "Price must be positive and greater than zero.")
-    private Double price;
-
-    @Column(columnDefinition = "TINYINT", nullable = false)
-    @NotNull(message = "Product availability cannot be null.")
-    private Boolean available;
-
-    @Column(columnDefinition = "VARCHAR(1000)", nullable = false)
-    @NotBlank(message = "Product thumbnail cannot be null or empty.")
+    @Column(length = 1000)
+    @Size(max = 1000, message = "Brand thumbnail cannot exceed 1000 characters.")
     private String thumbnail;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "brand_id", nullable = false)
-    @NotNull(message = "Brand cannot be null.")
-    private BrandEntity brand;
+    @Column(columnDefinition = "TINYINT", nullable = false)
+    @NotNull(message = "Brand availability cannot be null.")
+    private Boolean available = true;
+
+    @OneToMany(mappedBy = "brand", orphanRemoval = true)
+    @JsonIgnore
+    private Set<ProductEntity> products = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {
@@ -63,7 +56,7 @@ public class ProductEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        ProductEntity that = (ProductEntity) o;
+        BrandEntity that = (BrandEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 
@@ -77,14 +70,13 @@ public class ProductEntity {
         return String.format(Locale.ENGLISH,
                 """
                         {
-                            id: %s,
-                            name: "%s",
-                            description: "%s",
-                            price: %.2f,
-                            available: %s,
-                            thumbnail: "%s"
+                            "id": %d,
+                            "name": "%s",
+                            "description": "%s",
+                            "thumbnail": "%s",
+                            "available": %b
                         }
                         """,
-                id, name, description, price, available, thumbnail);
+                id, name, description, thumbnail, available);
     }
 }
