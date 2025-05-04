@@ -56,6 +56,11 @@ public class ProductEntity {
     @NotNull(message = "Brand cannot be null.")
     private BrandEntity brand;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    @NotNull(message = "Category cannot be null.")
+    private CategoryEntity category;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

@@ -1,5 +1,6 @@
 package me.davidgarmo.soundseeker.product.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,8 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "CATEGORY")
@@ -40,6 +43,10 @@ public class CategoryEntity {
     @Column(columnDefinition = "TINYINT", nullable = false)
     @NotBlank(message = "Category availability cannot be null.")
     private Boolean available = true;
+
+    @OneToMany(mappedBy = "category", orphanRemoval = true)
+    @JsonIgnore
+    private Set<ProductEntity> products = new LinkedHashSet<>();
 
     @Override
     public final boolean equals(Object o) {
