@@ -6,6 +6,8 @@ import me.davidgarmo.soundseeker.product.service.dto.CategoryDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/category")
 @CrossOrigin
@@ -24,5 +26,10 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.categoryService.findById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> findAll() {
+        return ResponseEntity.ok(this.categoryService.findAll());
     }
 }
