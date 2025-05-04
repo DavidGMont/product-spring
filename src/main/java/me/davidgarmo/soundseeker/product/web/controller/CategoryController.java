@@ -1,9 +1,10 @@
 package me.davidgarmo.soundseeker.product.web.controller;
 
+import jakarta.validation.Valid;
 import me.davidgarmo.soundseeker.product.service.ICategoryService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.davidgarmo.soundseeker.product.service.dto.CategoryDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/category")
@@ -13,5 +14,10 @@ public class CategoryController {
 
     public CategoryController(ICategoryService categoryService) {
         this.categoryService = categoryService;
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoryDto> save(@Valid @RequestBody CategoryDto categoryDto) {
+        return ResponseEntity.status(201).body(this.categoryService.save(categoryDto));
     }
 }
