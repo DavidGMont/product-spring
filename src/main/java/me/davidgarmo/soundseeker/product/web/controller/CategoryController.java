@@ -20,4 +20,9 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> save(@Valid @RequestBody CategoryDto categoryDto) {
         return ResponseEntity.status(201).body(this.categoryService.save(categoryDto));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.categoryService.findById(id));
+    }
 }
