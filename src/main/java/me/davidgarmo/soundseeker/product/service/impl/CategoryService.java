@@ -60,6 +60,9 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public void deleteById(Long id) {
-
+        if (!this.categoryRepository.existsById(id)) {
+            throw new IllegalArgumentException("Category not found.");
+        }
+        this.categoryRepository.deleteById(id);
     }
 }
