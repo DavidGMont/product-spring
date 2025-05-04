@@ -32,4 +32,9 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> findAll() {
         return ResponseEntity.ok(this.categoryService.findAll());
     }
+
+    @PutMapping
+    public ResponseEntity<CategoryDto> update(@Valid @RequestBody CategoryDto categoryDto) {
+        return ResponseEntity.ok(this.categoryService.update(categoryDto));
+    }
 }
