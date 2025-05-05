@@ -34,5 +34,8 @@ public record ProductDto(
         String thumbnail,
 
         @NotNull(message = "Brand cannot be null.")
-        BrandDto brand) implements Serializable {
+        BrandDto brand,
+
+        @NotNull(message = "Category cannot be null.")
+        CategoryDto category) implements Serializable {
 }
