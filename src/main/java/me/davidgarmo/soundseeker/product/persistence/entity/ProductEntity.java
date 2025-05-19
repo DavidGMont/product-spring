@@ -16,7 +16,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "PRODUCT", indexes = {
-        @Index(name = "idx_product_brand", columnList = "brand_id")
+        @Index(name = "idx_product_brand", columnList = "brand_id"),
+        @Index(name = "idx_product_category", columnList = "category_id")
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,6 +56,11 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     @NotNull(message = "Brand cannot be null.")
     private BrandEntity brand;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    @NotNull(message = "Category cannot be null.")
+    private CategoryEntity category;
 
     @Override
     public final boolean equals(Object o) {
