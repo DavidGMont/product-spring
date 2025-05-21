@@ -2,12 +2,10 @@ package me.davidgarmo.soundseeker.product.persistence.repository;
 
 import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
 import me.davidgarmo.soundseeker.product.persistence.entity.CategoryEntity;
+import me.davidgarmo.soundseeker.product.persistence.entity.ProductEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -15,6 +13,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -88,5 +88,39 @@ class ProductRepositoryTest {
         this.categoryRepository.deleteAll();
         this.brandRepository.deleteAll();
         LOGGER.debug("✔ Database cleaned up.");
+    }
+
+    @Test
+    @Order(0)
+    void givenACompleteProduct_whenSaved_thenItShouldPersistInTheDatabase() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl",
+                "La Serie Contemporánea Jazzmaster HH de Squier luce la apariencia de un Jazzmaster clásico, " +
+                        "reforzado con pastillas de cerámica activas para satisfacer las necesidades de alto " +
+                        "rendimiento de los sonidos modernos.",
+                499.99, true, "/uploads/1744051954836.webp", brand, category);
+        ProductEntity savedProduct = this.productRepository.save(product);
+
+        assertThat(savedProduct.getId()).isNotNull().isEqualTo(4L);
+        assertThat(savedProduct)
+                .extracting("name", "description", "price", "available", "thumbnail")
+                .containsExactly("Guitarra Eléctrica Fender Squier Surf Pearl",
+                        "La Serie Contemporánea Jazzmaster HH de Squier luce la apariencia de un Jazzmaster clásico, " +
+                                "reforzado con pastillas de cerámica activas para satisfacer las necesidades de alto " +
+                                "rendimiento de los sonidos modernos.",
+                        499.99, true, "/uploads/1744051954836.webp");
+        assertThat(savedProduct)
+                .extracting("name", "description", "price", "available", "thumbnail")
+                .containsExactly(product.getName(), product.getDescription(), product.getPrice(),
+                        product.getAvailable(), product.getThumbnail());
+
+        assertThat(savedProduct.getBrand()).extracting("id", "name", "description", "thumbnail", "available")
+                .containsExactly(brand.getId(), brand.getName(), brand.getDescription(), brand.getThumbnail(),
+                        brand.getAvailable());
+        assertThat(savedProduct.getCategory()).extracting("id", "name", "description", "thumbnail", "available")
+                .containsExactly(category.getId(), category.getName(), category.getDescription(),
+                        category.getThumbnail(), category.getAvailable());
+        LOGGER.info("✔ Product matched the expected values.");
     }
 }
