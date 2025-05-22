@@ -144,4 +144,21 @@ class ProductRepositoryTest {
                         category.getThumbnail(), category.getAvailable());
         LOGGER.info("✔ Product matched the expected values.");
     }
+
+    @Test
+    @Order(1)
+    void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
+        ProductEntity product = this.productRepository.findById(1L).orElseThrow();
+
+        assertThat(product.getId()).isNotNull().isEqualTo(1L);
+        assertThat(product)
+                .extracting("name", "description", "price", "available", "thumbnail")
+                .containsExactly("Violín 4/4 Sólido Yamaha HXTQ09FRO Natural",
+                        "El Violín Yamaha es un instrumento hecho de madera solida, diseñado para estudiantes " +
+                                "de nivel académico medio o iniciación para estudios formales.",
+                        499.99, true, "/uploads/1744052240330.webp");
+        assertThat(product.getBrand().getId()).isNotNull().isEqualTo(1L);
+        assertThat(product.getCategory().getId()).isNotNull().isEqualTo(2L);
+        LOGGER.info("✔ Product with ID 1 was found in the database and matched the expected values.");
+    }
 }
