@@ -171,4 +171,15 @@ class ProductRepositoryTest {
         assertThat(exists).isTrue();
         LOGGER.info("✔ Product with name '{}' exists in the database.", name);
     }
+
+    @Test
+    @Order(3)
+    void givenAnExistingProductNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
+        String name = "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony";
+        Long id = 2L;
+        boolean exists = this.productRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+
+        assertThat(exists).isFalse();
+        LOGGER.info("✔ Product with name '{}' and ID '{}' does not exist in the database.", name, id);
+    }
 }
