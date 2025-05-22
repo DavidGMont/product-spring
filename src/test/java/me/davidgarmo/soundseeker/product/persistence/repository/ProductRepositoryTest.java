@@ -80,6 +80,27 @@ class ProductRepositoryTest {
                         "/uploads/triangle-instrument.svg", true, null)
         );
         this.categoryRepository.saveAll(categories);
+
+        List<ProductEntity> products = List.of(
+                new ProductEntity(null, "Violín 4/4 Sólido Yamaha HXTQ09FRO Natural",
+                        "El Violín Yamaha es un instrumento hecho de madera solida, diseñado para estudiantes " +
+                                "de nivel académico medio o iniciación para estudios formales.",
+                        499.99, true, "/uploads/1744052240330.webp",
+                        this.brandRepository.findById(1L).orElseThrow(), this.categoryRepository.findById(2L).orElseThrow()),
+                new ProductEntity(null, "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony",
+                        "El Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony es un instrumento de " +
+                                "prestigio mundial, conocido por su sonido excepcional y su diseño elegante. " +
+                                "Ideal para pianistas profesionales y amantes de la música.",
+                        19999.99, true, "/uploads/1744051954836.webp",
+                        this.brandRepository.findById(3L).orElseThrow(), this.categoryRepository.findById(3L).orElseThrow()),
+                new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Negra",
+                        "La Batería Accent Drive 5PC 22\" Yamaha LC19511 Negra es un kit completo de batería " +
+                                "ideal para principiantes y músicos intermedios. Ofrece un sonido potente y " +
+                                "una construcción duradera, perfecta para cualquier estilo musical.",
+                        799.99, true, "/uploads/1747796927376.webp",
+                        this.brandRepository.findById(1L).orElseThrow(), this.categoryRepository.findById(1L).orElseThrow())
+        );
+        this.productRepository.saveAll(products);
     }
 
     @AfterEach
