@@ -67,4 +67,18 @@ class BrandRepositoryTest {
                 .containsExactly(brand.getName(), brand.getDescription(), brand.getThumbnail(), brand.getAvailable());
         LOGGER.info("✔ Brand matched the expected values.");
     }
+
+    @Test
+    @Order(1)
+    void givenAnExistingBrandId_whenFoundById_thenItShouldReturnTheBrand() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+
+        assertThat(brand.getId()).isNotNull().isEqualTo(1L);
+        assertThat(brand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Fender", "El sonido que revolucionó la música moderna. Desde 1946, Fender ha sido " +
+                        "sinónimo de guitarras y bajos legendarios que han moldeado géneros enteros. Siente la magia " +
+                        "de décadas de innovación en tus manos y déjate llevar por ese tono inconfundible que ha " +
+                        "conquistado escenarios de todo el mundo.", "/uploads/fender.svg", true);
+        LOGGER.info("✔ Brand with ID 1 was found in the database and matched the expected values.");
+    }
 }
