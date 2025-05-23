@@ -31,6 +31,16 @@ class BrandRepositoryTest {
         registry.add("spring.jpa.show-sql", () -> false);
     }
 
+    @BeforeEach
+    void setUp() {
+        BrandEntity brand = new BrandEntity(null, "Fender", "El sonido que revolucionó la música moderna. Desde " +
+                "1946, Fender ha sido sinónimo de guitarras y bajos legendarios que han moldeado géneros " +
+                "enteros. Siente la magia de décadas de innovación en tus manos y déjate llevar por ese tono " +
+                "inconfundible que ha conquistado escenarios de todo el mundo.", "/uploads/fender.svg",
+                true, null);
+        this.brandRepository.save(brand);
+    }
+
     @AfterEach
     void tearDown() {
         this.brandRepository.deleteAll();
@@ -47,7 +57,7 @@ class BrandRepositoryTest {
                 true, null);
         BrandEntity savedBrand = this.brandRepository.save(brand);
 
-        assertThat(savedBrand.getId()).isNotNull().isEqualTo(1L);
+        assertThat(savedBrand.getId()).isNotNull().isEqualTo(2L);
         assertThat(savedBrand).extracting("name", "description", "thumbnail", "available")
                 .containsExactly("Yamaha", "Innovación japonesa en cada instrumento. Yamaha combina tradición y " +
                         "tecnología para ofrecerte sonidos precisos y materiales duraderos que te acompañarán en cada " +
