@@ -74,4 +74,20 @@ class CategoryRepositoryTest {
                         category.getAvailable());
         LOGGER.info("✔ Category matched the expected values.");
     }
+
+    @Test
+    @Order(1)
+    void givenAnExistingCategoryId_whenFoundById_thenItShouldReturnTheCategory() {
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+
+        assertThat(category.getId()).isNotNull().isEqualTo(1L);
+        assertThat(category)
+                .extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Baterías", "Sumérgete desde el rock estruendoso hasta el jazz más sutil. " +
+                        "Cada tarola, bombo y platillo está listo para traducir tu pasión en pulsaciones " +
+                        "que capturan almas. Libera tu potencial rítmico, marca el compás que hará latir " +
+                        "corazones y convierte cada actuación en una experiencia inolvidable. ¡Es hora de " +
+                        "que hagas retumbar el mundo con tu talento!", "/uploads/drum.svg", true);
+        LOGGER.info("✔ Category with ID 1 was found in the database and matched the expected values.");
+    }
 }
