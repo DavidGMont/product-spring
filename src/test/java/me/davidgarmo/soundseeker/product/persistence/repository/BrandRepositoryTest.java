@@ -1,15 +1,16 @@
 package me.davidgarmo.soundseeker.product.persistence.repository;
 
+import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -34,5 +35,26 @@ class BrandRepositoryTest {
     void tearDown() {
         this.brandRepository.deleteAll();
         LOGGER.debug("✔ Database cleaned up.");
+    }
+
+    @Test
+    @Order(0)
+    void givenACompleteBrand_whenSaved_thenItShouldPersistInTheDatabase() {
+        BrandEntity brand = new BrandEntity(null, "Yamaha", "Innovación japonesa en cada instrumento. " +
+                "Yamaha combina tradición y tecnología para ofrecerte sonidos precisos y materiales duraderos que " +
+                "te acompañarán en cada concierto, ensayo y aventura musical. Descubre por qué los " +
+                "profesionales de todo el mundo confían en la excelencia Yamaha.", "/uploads/yamaha.svg",
+                true, null);
+        BrandEntity savedBrand = this.brandRepository.save(brand);
+
+        assertThat(savedBrand.getId()).isNotNull().isEqualTo(1L);
+        assertThat(savedBrand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Yamaha", "Innovación japonesa en cada instrumento. Yamaha combina tradición y " +
+                        "tecnología para ofrecerte sonidos precisos y materiales duraderos que te acompañarán en cada " +
+                        "concierto, ensayo y aventura musical. Descubre por qué los profesionales de todo el mundo " +
+                        "confían en la excelencia Yamaha.", "/uploads/yamaha.svg", true);
+        assertThat(savedBrand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly(brand.getName(), brand.getDescription(), brand.getThumbnail(), brand.getAvailable());
+        LOGGER.info("✔ Brand matched the expected values.");
     }
 }
