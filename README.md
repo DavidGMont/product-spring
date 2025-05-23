@@ -18,6 +18,12 @@ Eliminar) a través de una API REST.
 - Manejo centralizado de excepciones
 - Pruebas unitarias
 
+## 📽 Demo
+
+Vídeo de funcionamiento:
+
+https://github.com/user-attachments/assets/3d364240-edc2-4ef1-a628-701d2df3879f
+
 ## 🧱 Estructura del proyecto
 
 El proyecto está organizado en paquetes según su responsabilidad:
