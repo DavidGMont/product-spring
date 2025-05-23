@@ -90,4 +90,14 @@ class CategoryRepositoryTest {
                         "que hagas retumbar el mundo con tu talento!", "/uploads/drum.svg", true);
         LOGGER.info("✔ Category with ID 1 was found in the database and matched the expected values.");
     }
+
+    @Test
+    @Order(2)
+    void givenAnExistingCategoryName_whenExistsByName_thenItShouldReturnTrue() {
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+
+        boolean exists = this.categoryRepository.existsByNameIgnoreCase(category.getName());
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Category with name '{}' exists in the database.", category.getName());
+    }
 }
