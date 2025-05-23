@@ -81,4 +81,14 @@ class BrandRepositoryTest {
                         "conquistado escenarios de todo el mundo.", "/uploads/fender.svg", true);
         LOGGER.info("✔ Brand with ID 1 was found in the database and matched the expected values.");
     }
+
+    @Test
+    @Order(2)
+    void givenAnExistingBrandName_whenExistsByName_thenItShouldReturnTrue() {
+        String brandName = "Fender";
+        boolean exists = this.brandRepository.existsByNameIgnoreCase(brandName);
+
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Brand with name '{}' exists in the database.", brandName);
+    }
 }
