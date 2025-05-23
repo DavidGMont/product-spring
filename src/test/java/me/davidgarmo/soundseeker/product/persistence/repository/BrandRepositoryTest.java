@@ -91,4 +91,15 @@ class BrandRepositoryTest {
         assertThat(exists).isTrue();
         LOGGER.info("✔ Brand with name '{}' exists in the database.", brandName);
     }
+
+    @Test
+    @Order(3)
+    void givenAnExistingBrandNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
+        String brandName = "Fender";
+        Long brandId = 2L;
+        boolean exists = this.brandRepository.existsByNameIgnoreCaseAndIdNot(brandName, brandId);
+
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Brand with name '{}' and ID '{}' exists in the database.", brandName, brandId);
+    }
 }
