@@ -1,0 +1,105 @@
+package me.davidgarmo.soundseeker.product.persistence.repository;
+
+import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class BrandRepositoryTest {
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    @Autowired
+    private BrandRepository brandRepository;
+
+    @DynamicPropertySource
+    static void setUpDynamicProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", () -> "jdbc:h2:mem:product-test");
+        registry.add("spring.datasource.username", () -> "sa");
+        registry.add("spring.datasource.password", () -> "");
+        registry.add("spring.jpa.defer-datasource-initialization", () -> false);
+        registry.add("spring.sql.init.mode", () -> "never");
+        registry.add("spring.jpa.show-sql", () -> false);
+    }
+
+    @BeforeEach
+    void setUp() {
+        BrandEntity brand = new BrandEntity(null, "Fender", "El sonido que revolucionó la música moderna. Desde " +
+                "1946, Fender ha sido sinónimo de guitarras y bajos legendarios que han moldeado géneros " +
+                "enteros. Siente la magia de décadas de innovación en tus manos y déjate llevar por ese tono " +
+                "inconfundible que ha conquistado escenarios de todo el mundo.", "/uploads/fender.svg",
+                true, null);
+        this.brandRepository.save(brand);
+    }
+
+    @AfterEach
+    void tearDown() {
+        this.brandRepository.deleteAll();
+        LOGGER.debug("✔ Database cleaned up.");
+    }
+
+    @Test
+    @Order(0)
+    void givenACompleteBrand_whenSaved_thenItShouldPersistInTheDatabase() {
+        BrandEntity brand = new BrandEntity(null, "Yamaha", "Innovación japonesa en cada instrumento. " +
+                "Yamaha combina tradición y tecnología para ofrecerte sonidos precisos y materiales duraderos que " +
+                "te acompañarán en cada concierto, ensayo y aventura musical. Descubre por qué los " +
+                "profesionales de todo el mundo confían en la excelencia Yamaha.", "/uploads/yamaha.svg",
+                true, null);
+        BrandEntity savedBrand = this.brandRepository.save(brand);
+
+        assertThat(savedBrand.getId()).isNotNull().isEqualTo(2L);
+        assertThat(savedBrand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Yamaha", "Innovación japonesa en cada instrumento. Yamaha combina tradición y " +
+                        "tecnología para ofrecerte sonidos precisos y materiales duraderos que te acompañarán en cada " +
+                        "concierto, ensayo y aventura musical. Descubre por qué los profesionales de todo el mundo " +
+                        "confían en la excelencia Yamaha.", "/uploads/yamaha.svg", true);
+        assertThat(savedBrand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly(brand.getName(), brand.getDescription(), brand.getThumbnail(), brand.getAvailable());
+        LOGGER.info("✔ Brand matched the expected values.");
+    }
+
+    @Test
+    @Order(1)
+    void givenAnExistingBrandId_whenFoundById_thenItShouldReturnTheBrand() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+
+        assertThat(brand.getId()).isNotNull().isEqualTo(1L);
+        assertThat(brand).extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Fender", "El sonido que revolucionó la música moderna. Desde 1946, Fender ha sido " +
+                        "sinónimo de guitarras y bajos legendarios que han moldeado géneros enteros. Siente la magia " +
+                        "de décadas de innovación en tus manos y déjate llevar por ese tono inconfundible que ha " +
+                        "conquistado escenarios de todo el mundo.", "/uploads/fender.svg", true);
+        LOGGER.info("✔ Brand with ID 1 was found in the database and matched the expected values.");
+    }
+
+    @Test
+    @Order(2)
+    void givenAnExistingBrandName_whenExistsByName_thenItShouldReturnTrue() {
+        String brandName = "Fender";
+        boolean exists = this.brandRepository.existsByNameIgnoreCase(brandName);
+
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Brand with name '{}' exists in the database.", brandName);
+    }
+
+    @Test
+    @Order(3)
+    void givenAnExistingBrandNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
+        String brandName = "Fender";
+        Long brandId = 2L;
+        boolean exists = this.brandRepository.existsByNameIgnoreCaseAndIdNot(brandName, brandId);
+
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Brand with name '{}' and ID '{}' exists in the database.", brandName, brandId);
+    }
+}
