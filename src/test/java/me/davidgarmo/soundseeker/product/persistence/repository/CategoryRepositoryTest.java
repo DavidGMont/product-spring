@@ -3,15 +3,14 @@ package me.davidgarmo.soundseeker.product.persistence.repository;
 import me.davidgarmo.soundseeker.product.persistence.entity.CategoryEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -46,5 +45,33 @@ class CategoryRepositoryTest {
     void tearDown() {
         this.categoryRepository.deleteAll();
         LOGGER.debug("✔ Database cleaned up.");
+    }
+
+    @Test
+    @Order(0)
+    void givenACompleteCategory_whenSaved_thenItShouldPersistInTheDatabase() {
+        CategoryEntity category = new CategoryEntity(null, "Guitarras y Cuerdas", "Explora el universo sonoro que te " +
+                "ofrecen nuestras guitarras y cuerdas en alquiler. Ya sea que anheles el dulce susurro de " +
+                "una guitarra acústica o la potencia estruendosa de un bajo eléctrico, tenemos el " +
+                "instrumento perfecto para ti. Sumérgete en la variedad, siente la emoción de probar " +
+                "diferentes modelos y encuentra tu compañero musical ideal.", "/uploads/guitars.svg",
+                true, null);
+        CategoryEntity savedCategory = this.categoryRepository.save(category);
+
+        assertThat(savedCategory.getId()).isNotNull().isEqualTo(2L);
+        assertThat(savedCategory)
+                .extracting("name", "description", "thumbnail", "available")
+                .containsExactly("Guitarras y Cuerdas", "Explora el universo sonoro que te ofrecen nuestras " +
+                                "guitarras y cuerdas en alquiler. Ya sea que anheles el dulce susurro de una guitarra " +
+                                "acústica o la potencia estruendosa de un bajo eléctrico, tenemos el instrumento " +
+                                "perfecto para ti. Sumérgete en la variedad, siente la emoción de probar " +
+                                "diferentes modelos y encuentra tu compañero musical ideal.", "/uploads/guitars.svg",
+                        true);
+
+        assertThat(savedCategory)
+                .extracting("name", "description", "thumbnail", "available")
+                .containsExactly(category.getName(), category.getDescription(), category.getThumbnail(),
+                        category.getAvailable());
+        LOGGER.info("✔ Category matched the expected values.");
     }
 }
