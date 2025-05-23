@@ -100,4 +100,15 @@ class CategoryRepositoryTest {
         assertThat(exists).isTrue();
         LOGGER.info("✔ Category with name '{}' exists in the database.", category.getName());
     }
+
+    @Test
+    @Order(3)
+    void givenAnExistingProductNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
+        String name = "Baterías";
+        Long id = 2L;
+        boolean exists = this.categoryRepository.existsByNameIgnoreCaseAndIdNot(name, id);
+
+        assertThat(exists).isTrue();
+        LOGGER.info("✔ Category with name '{}' and ID '{}' exists in the database.", name, id);
+    }
 }
