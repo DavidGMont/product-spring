@@ -1,5 +1,6 @@
 package me.davidgarmo.soundseeker.product.persistence.repository;
 
+import jakarta.validation.ConstraintViolationException;
 import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
 import me.davidgarmo.soundseeker.product.persistence.entity.CategoryEntity;
 import me.davidgarmo.soundseeker.product.persistence.entity.ProductEntity;
@@ -15,6 +16,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -143,6 +145,19 @@ class ProductRepositoryTest {
                 .containsExactly(category.getId(), category.getName(), category.getDescription(),
                         category.getThumbnail(), category.getAvailable());
         LOGGER.info("✔ Product matched the expected values.");
+    }
+
+    @Test
+    void givenANullName_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, null, "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with null name threw expected exception.");
     }
 
     @Test
