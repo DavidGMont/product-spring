@@ -215,6 +215,20 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenADescriptionWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        String longDescription = "Descripción del producto ".repeat(70);
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Verde",
+                longDescription, 199.99, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product description cannot exceed 1000 characters.");
+        LOGGER.info("✔ Attempt to save product with description exceeding 1000 characters threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
