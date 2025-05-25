@@ -174,6 +174,21 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenANameWithMoreThan60Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        String longName = "Guitarra Eléctrica Fender Squier Surf Pearl con un nombre excesivamente largo " +
+                "que supera los sesenta caracteres permitidos.";
+        ProductEntity product = new ProductEntity(null, longName, "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot exceed 60 characters.");
+        LOGGER.info("✔ Attempt to save product with name exceeding 60 characters threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
