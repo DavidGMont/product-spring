@@ -229,6 +229,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenANullPrice_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Piano Steinway & Sons Modelo E Hamb Ebony",
+                "Descripción del producto", null, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Price cannot be null.");
+        LOGGER.info("✔ Attempt to save product with null price threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
