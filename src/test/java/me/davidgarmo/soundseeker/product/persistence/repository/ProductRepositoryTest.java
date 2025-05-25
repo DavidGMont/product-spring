@@ -255,6 +255,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenAZeroPrice_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Piano Steinway & Sons Modelo E Hamb Ebony",
+                "Descripción del producto", 0.0, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Price must be positive and greater than zero.");
+        LOGGER.info("✔ Attempt to save product with zero price threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
