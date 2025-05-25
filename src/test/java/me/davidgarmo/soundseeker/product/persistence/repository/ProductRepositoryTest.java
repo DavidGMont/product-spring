@@ -161,6 +161,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenAnEmptyName_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "", "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with empty name threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
