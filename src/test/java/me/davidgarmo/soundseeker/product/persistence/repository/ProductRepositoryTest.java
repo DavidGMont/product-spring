@@ -268,6 +268,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenANullAvailable_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Morada",
+                "Descripción del producto", 199.99, null, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product availability cannot be null.");
+        LOGGER.info("✔ Attempt to save product with null availability threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
