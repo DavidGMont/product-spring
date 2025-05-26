@@ -307,6 +307,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenAThumbnailWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        String longThumbnail = "https://example.com/thumbnail/".repeat(70);
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Roja",
+                "Descripción del producto", 199.99, true, longThumbnail, brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(Exception.class);
+        LOGGER.info("✔ Attempt to save product with thumbnail exceeding 1000 characters threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
