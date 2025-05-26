@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -317,6 +318,20 @@ class ProductRepositoryTest {
         assertThatCode(() -> this.productRepository.save(product))
                 .isInstanceOf(Exception.class);
         LOGGER.info("✔ Attempt to save product with thumbnail exceeding 1000 characters threw expected exception.");
+    }
+
+    @Test
+    void givenAProductWithNonExistentBrand_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = new BrandEntity(999L, "NonExistentBrand", "Descripción de marca inexistente",
+                "/uploads/nonexistent.svg", true, null);
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Amarilla",
+                "Descripción del producto", 199.99, true, "/uploads/1744051954836.webp",
+                brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        LOGGER.info("✔ Attempt to save product with non-existent brand threw expected exception.");
     }
 
     @Test
