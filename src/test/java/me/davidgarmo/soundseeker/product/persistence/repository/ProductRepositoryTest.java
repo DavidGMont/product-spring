@@ -281,6 +281,19 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenANullThumbnail_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Roja",
+                "Descripción del producto", 199.99, true, null, brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product thumbnail cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with null thumbnail threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
