@@ -335,6 +335,20 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void givenAProductWithNonExistentCategory_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = new CategoryEntity(999L, "NonExistentCategory", "Descripción de categoría inexistente",
+                "/uploads/nonexistent.svg", true, null);
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Azul",
+                "Descripción del producto", 199.99, true, "/uploads/1744051954836.webp",
+                brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        LOGGER.info("✔ Attempt to save product with non-existent category threw expected exception.");
+    }
+
+    @Test
     @Order(1)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
