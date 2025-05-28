@@ -15,6 +15,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -363,6 +364,15 @@ class ProductRepositoryTest {
         assertThat(product.getBrand().getId()).isNotNull().isEqualTo(1L);
         assertThat(product.getCategory().getId()).isNotNull().isEqualTo(2L);
         LOGGER.info("✔ Product with ID 1 was found in the database and matched the expected values.");
+    }
+
+    @Test
+    void givenANonExistingProductId_whenFoundById_thenItShouldReturnEmpty() {
+        Long nonExistentId = 999L;
+        Optional<ProductEntity> product = this.productRepository.findById(nonExistentId);
+
+        assertThat(product).isEmpty();
+        LOGGER.info("✔ Product with ID '{}' does not exist in the database.", nonExistentId);
     }
 
     @Test
