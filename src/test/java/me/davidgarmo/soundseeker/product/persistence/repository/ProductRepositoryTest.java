@@ -150,6 +150,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(1)
     void givenANullName_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -163,6 +164,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(2)
     void givenAnEmptyName_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -176,6 +178,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(3)
     void givenANameWithMoreThan60Characters_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -191,6 +194,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(4)
     void givenANullDescription_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
@@ -204,6 +208,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(5)
     void givenAnEmptyDescription_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
@@ -217,6 +222,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(6)
     void givenADescriptionWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
@@ -231,6 +237,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(7)
     void givenANullPrice_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
@@ -244,6 +251,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(8)
     void givenANegativePrice_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
@@ -257,6 +265,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(9)
     void givenAZeroPrice_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
@@ -270,6 +279,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(10)
     void givenANullAvailable_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
@@ -283,6 +293,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(11)
     void givenANullThumbnail_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -296,6 +307,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(12)
     void givenAnEmptyThumbnail_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -309,6 +321,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(13)
     void givenAThumbnailWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
         CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
@@ -322,6 +335,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(14)
     void givenAProductWithNonExistentBrand_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = new BrandEntity(999L, "NonExistentBrand", "Descripción de marca inexistente",
                 "/uploads/nonexistent.svg", true, null);
@@ -336,6 +350,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(15)
     void givenAProductWithNonExistentCategory_whenSaved_thenItShouldThrowException() {
         BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
         CategoryEntity category = new CategoryEntity(999L, "NonExistentCategory", "Descripción de categoría inexistente",
@@ -350,7 +365,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @Order(1)
+    @Order(16)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
 
@@ -367,6 +382,7 @@ class ProductRepositoryTest {
     }
 
     @Test
+    @Order(17)
     void givenANonExistingProductId_whenFoundById_thenItShouldReturnEmpty() {
         Long nonExistentId = 999L;
         Optional<ProductEntity> product = this.productRepository.findById(nonExistentId);
@@ -376,7 +392,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @Order(2)
+    @Order(18)
     void givenAnExistingProductName_whenExistsByName_thenItShouldReturnTrue() {
         String name = "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony";
         boolean exists = this.productRepository.existsByNameIgnoreCase(name);
@@ -386,7 +402,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @Order(3)
+    @Order(19)
     void givenAnExistingProductNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
         String name = "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony";
         Long id = 2L;
