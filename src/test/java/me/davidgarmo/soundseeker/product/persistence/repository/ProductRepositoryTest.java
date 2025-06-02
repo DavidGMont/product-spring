@@ -1,5 +1,6 @@
 package me.davidgarmo.soundseeker.product.persistence.repository;
 
+import jakarta.validation.ConstraintViolationException;
 import me.davidgarmo.soundseeker.product.persistence.entity.BrandEntity;
 import me.davidgarmo.soundseeker.product.persistence.entity.CategoryEntity;
 import me.davidgarmo.soundseeker.product.persistence.entity.ProductEntity;
@@ -8,13 +9,16 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -147,6 +151,221 @@ class ProductRepositoryTest {
 
     @Test
     @Order(1)
+    void givenANullName_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, null, "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with null name threw expected exception.");
+    }
+
+    @Test
+    @Order(2)
+    void givenAnEmptyName_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "", "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with empty name threw expected exception.");
+    }
+
+    @Test
+    @Order(3)
+    void givenANameWithMoreThan60Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        String longName = "Guitarra Eléctrica Fender Squier Surf Pearl con un nombre excesivamente largo " +
+                "que supera los sesenta caracteres permitidos.";
+        ProductEntity product = new ProductEntity(null, longName, "Descripción del producto", 199.99, true,
+                "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product name cannot exceed 60 characters.");
+        LOGGER.info("✔ Attempt to save product with name exceeding 60 characters threw expected exception.");
+    }
+
+    @Test
+    @Order(4)
+    void givenANullDescription_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Verde", null,
+                199.99, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product description cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with null description threw expected exception.");
+    }
+
+    @Test
+    @Order(5)
+    void givenAnEmptyDescription_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Verde", "",
+                199.99, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product description cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with empty description threw expected exception.");
+    }
+
+    @Test
+    @Order(6)
+    void givenADescriptionWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        String longDescription = "Descripción del producto ".repeat(70);
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Verde",
+                longDescription, 199.99, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product description cannot exceed 1000 characters.");
+        LOGGER.info("✔ Attempt to save product with description exceeding 1000 characters threw expected exception.");
+    }
+
+    @Test
+    @Order(7)
+    void givenANullPrice_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Piano Steinway & Sons Modelo E Hamb Ebony",
+                "Descripción del producto", null, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Price cannot be null.");
+        LOGGER.info("✔ Attempt to save product with null price threw expected exception.");
+    }
+
+    @Test
+    @Order(8)
+    void givenANegativePrice_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Piano Steinway & Sons Modelo E Hamb Ebony",
+                "Descripción del producto", -199.99, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Price must be positive and greater than zero.");
+        LOGGER.info("✔ Attempt to save product with negative price threw expected exception.");
+    }
+
+    @Test
+    @Order(9)
+    void givenAZeroPrice_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(3L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(3L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Piano Steinway & Sons Modelo E Hamb Ebony",
+                "Descripción del producto", 0.0, true, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Price must be positive and greater than zero.");
+        LOGGER.info("✔ Attempt to save product with zero price threw expected exception.");
+    }
+
+    @Test
+    @Order(10)
+    void givenANullAvailable_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Batería Accent Drive 5PC 22\" Yamaha LC19511 Morada",
+                "Descripción del producto", 199.99, null, "/uploads/1744051954836.webp", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product availability cannot be null.");
+        LOGGER.info("✔ Attempt to save product with null availability threw expected exception.");
+    }
+
+    @Test
+    @Order(11)
+    void givenANullThumbnail_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Roja",
+                "Descripción del producto", 199.99, true, null, brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product thumbnail cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with null thumbnail threw expected exception.");
+    }
+
+    @Test
+    @Order(12)
+    void givenAnEmptyThumbnail_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Roja",
+                "Descripción del producto", 199.99, true, "", brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Product thumbnail cannot be null or empty.");
+        LOGGER.info("✔ Attempt to save product with empty thumbnail threw expected exception.");
+    }
+
+    @Test
+    @Order(13)
+    void givenAThumbnailWithMoreThan1000Characters_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(2L).orElseThrow();
+        CategoryEntity category = this.categoryRepository.findById(2L).orElseThrow();
+        String longThumbnail = "https://example.com/thumbnail/".repeat(70);
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Roja",
+                "Descripción del producto", 199.99, true, longThumbnail, brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(Exception.class);
+        LOGGER.info("✔ Attempt to save product with thumbnail exceeding 1000 characters threw expected exception.");
+    }
+
+    @Test
+    @Order(14)
+    void givenAProductWithNonExistentBrand_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = new BrandEntity(999L, "NonExistentBrand", "Descripción de marca inexistente",
+                "/uploads/nonexistent.svg", true, null);
+        CategoryEntity category = this.categoryRepository.findById(1L).orElseThrow();
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Amarilla",
+                "Descripción del producto", 199.99, true, "/uploads/1744051954836.webp",
+                brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        LOGGER.info("✔ Attempt to save product with non-existent brand threw expected exception.");
+    }
+
+    @Test
+    @Order(15)
+    void givenAProductWithNonExistentCategory_whenSaved_thenItShouldThrowException() {
+        BrandEntity brand = this.brandRepository.findById(1L).orElseThrow();
+        CategoryEntity category = new CategoryEntity(999L, "NonExistentCategory", "Descripción de categoría inexistente",
+                "/uploads/nonexistent.svg", true, null);
+        ProductEntity product = new ProductEntity(null, "Guitarra Eléctrica Fender Squier Surf Pearl Azul",
+                "Descripción del producto", 199.99, true, "/uploads/1744051954836.webp",
+                brand, category);
+
+        assertThatCode(() -> this.productRepository.save(product))
+                .isInstanceOf(DataIntegrityViolationException.class);
+        LOGGER.info("✔ Attempt to save product with non-existent category threw expected exception.");
+    }
+
+    @Test
+    @Order(16)
     void givenAnExistingProductId_whenFoundById_thenItShouldReturnTheProduct() {
         ProductEntity product = this.productRepository.findById(1L).orElseThrow();
 
@@ -163,7 +382,17 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @Order(2)
+    @Order(17)
+    void givenANonExistingProductId_whenFoundById_thenItShouldReturnEmpty() {
+        Long nonExistentId = 999L;
+        Optional<ProductEntity> product = this.productRepository.findById(nonExistentId);
+
+        assertThat(product).isEmpty();
+        LOGGER.info("✔ Product with ID '{}' does not exist in the database.", nonExistentId);
+    }
+
+    @Test
+    @Order(18)
     void givenAnExistingProductName_whenExistsByName_thenItShouldReturnTrue() {
         String name = "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony";
         boolean exists = this.productRepository.existsByNameIgnoreCase(name);
@@ -173,7 +402,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @Order(3)
+    @Order(19)
     void givenAnExistingProductNameAndId_whenExistsByNameAndIdNot_thenItShouldReturnTrue() {
         String name = "Piano de Cola Steinway & Sons Modelo D GRD Hamb Ebony";
         Long id = 2L;
